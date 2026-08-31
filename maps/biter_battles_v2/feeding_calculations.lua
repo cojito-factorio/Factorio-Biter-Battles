@@ -75,14 +75,14 @@ function Public.calc_feed_effects(initial_evo, food_value, num_flasks, current_p
         local V0 = 10.0 * (2 ^ k) -- the current doubling minimum value, growing from 10->20->40->.. with k
         local E0 = 3.3 + k * 0.7 -- the left edge of the current doubling segment
         local slope = V0 / 0.7 -- the slope of the current doubling segment
-        biter_health = V0 + slope * (evo - E0) -- the current minimum value in V0 added to the slope times the difference 
-                                               -- of the left edge and the current evo value, in practice you can think of 
-                                               -- evo = 360% behaving with the following values
-                                               -- V0 = 10x, the minimum health multiplier from 330->400 evo,
-                                               -- E0 = 330, the leftmost edge of the 330->400 segment,
-                                               -- slope = 10x / 0.7 = ~14x
-                                               -- evo-E0 = 360% - 330%, so 30% multiplied by the slope, = ~4.2,
-                                               -- so at 360% evo you get 10x + 4.2x = 14.2x  health multiplier.
+        biter_health = V0 + slope * (evo - E0) -- the current minimum value in V0 added to the slope times the difference
+        -- of the left edge and the current evo value, in practice you can think of
+        -- evo = 360% behaving with the following values
+        -- V0 = 10x, the minimum health multiplier from 330->400 evo,
+        -- E0 = 330, the leftmost edge of the 330->400 segment,
+        -- slope = 10x / 0.7 = ~14x
+        -- evo-E0 = 360% - 330%, so 30% multiplied by the slope, = ~4.2,
+        -- so at 360% evo you get 10x + 4.2x = 14.2x  health multiplier.
     end
 
     return {
