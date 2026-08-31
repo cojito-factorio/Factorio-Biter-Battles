@@ -56,19 +56,39 @@ function Public.calc_feed_effects(initial_evo, food_value, num_flasks, current_p
 
         food = food - amount_of_food_this_iteration
     end
-    -- Calculates reanimation chance. This value is normalized onto
-    -- maximum re-animation threshold. For example if real evolution is 150
-    -- and max is 350, then 150 / 350 = 42% chance.
-    local reanim_chance = math_floor(math.max(evo - 1.0, 0) * 100.0)
-    reanim_chance = reanim_chance / max_reanim_thresh * 100
-    reanim_chance = math.min(math_floor(reanim_chance), 90.0)
 
     threat = threat * get_instant_threat_player_count_modifier(current_player_count)
+
+    local biter_health = 1
+    if evo < 3.3 then
+        -- Calculates reanimation chance. This value is normalized onto
+        -- maximum re-animation threshold. For example if real evolution is 150
+        -- and max is 350, then 150 / 350 = 42% chance.
+        local reanim_chance = math_floor(math.max(evo - 1.0, 0) * 100.0)
+        reanim_chance = reanim_chance / max_reanim_thresh * 100
+        reanim_chance = math.min(math_floor(reanim_chance), 90.0)
+        biter_health = 1 / (1 - reanim_chance / 100)
+    else
+        -- New scaling curve after 330 evo which gives doubled health per 70% evo
+        -- for example 330 = 10x, 400 = 20x, 470 = 40x
+        local k = math.floor((evo - 3.3) / 0.7) -- gives the current doubling segment (0,1) = 10x->20x, (1,2) = 20x->40x..
+        local V0 = 10.0 * (2 ^ k) -- the current doubling minimum value, growing from 10->20->40->.. with k
+        local E0 = 3.3 + k * 0.7 -- the left edge of the current doubling segment
+        local slope = V0 / 0.7 -- the slope of the current doubling segment
+        biter_health = V0 + slope * (evo - E0) -- the current minimum value in V0 added to the slope times the difference 
+                                               -- of the left edge and the current evo value, in practice you can think of 
+                                               -- evo = 360% behaving with the following values
+                                               -- V0 = 10x, the minimum health multiplier from 330->400 evo,
+                                               -- E0 = 330, the leftmost edge of the 330->400 segment,
+                                               -- slope = 10x / 0.7 = ~14x
+                                               -- evo-E0 = 360% - 330%, so 30% multiplied by the slope, = ~4.2,
+                                               -- so at 360% evo you get 10x + 4.2x = 14.2x  health multiplier.
+    end
 
     return {
         evo_increase = evo - initial_evo,
         threat_increase = threat,
-        biter_health_factor = 1 / (1 - reanim_chance / 100),
+        biter_health_factor = biter_health,
     }
 end
 
