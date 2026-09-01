@@ -20,7 +20,7 @@ function test_feed_effects_1()
     local num_flasks = 100
     local flask_food_value = Tables.food_values['logistic-science-pack'].value * difficulty / 100
     local calc = Functions.calc_feed_effects(evo, flask_food_value, num_flasks, current_player_count, max_reanim_thresh)
-    lunatest.assert_equal('evo_increase: 0.032 threat: 34', effects_str(calc))
+    lunatest.assert_equal('evo_increase: 0.037 threat: 41', effects_str(calc))
 end
 
 function test_feed_effects_2()
@@ -31,7 +31,7 @@ function test_feed_effects_2()
     local num_flasks = 100
     local flask_food_value = Tables.food_values['automation-science-pack'].value * difficulty / 100
     local calc = Functions.calc_feed_effects(evo, flask_food_value, num_flasks, current_player_count, max_reanim_thresh)
-    lunatest.assert_equal('evo_increase: 0.029 threat: 143', effects_str(calc))
+    lunatest.assert_equal('evo_increase: 0.035 threat: 173', effects_str(calc))
 end
 
 function test_feed_effects_3()
@@ -123,8 +123,8 @@ function test_calc_send()
     )
     lunatest.assert_equal(
         '/calc-send evo=20.0 difficulty=30 players=4 color=logistic-science-pack count=1000\n'
-            .. 'evo_increase: 2.9 new_evo: 22.9\n'
-            .. 'threat_increase: 187',
+            .. 'evo_increase: 3.5 new_evo: 23.5\n'
+            .. 'threat_increase: 226',
         Functions.calc_send_command(
             'evo=20 color=green count=1000',
             difficulty_vote_value,
