@@ -351,6 +351,9 @@ function Public.tables()
     storage.spy_fish_timeout = {}
     storage.tm_custom_name = {}
     storage.total_passive_feed_redpotion = 0
+    storage.pending_autofeed_counts = {}
+    storage.pending_autofeed_counts['north'] = {}
+    storage.pending_autofeed_counts['south'] = {}
     storage.unit_spawners = {}
     ---@type table<integer, HighHealthUnit>
     storage.high_health_units = {}

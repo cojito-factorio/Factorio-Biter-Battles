@@ -16,21 +16,22 @@ local math_floor = math.floor
 local unit_type_raffle = { 'biter', 'mixed', 'mixed', 'spitter', 'spitter' }
 local size_of_unit_type_raffle = #unit_type_raffle
 
+local small = 15;
 local threat_values = {
-    ['small-spitter'] = 1.5,
-    ['small-biter'] = 1.5,
-    ['medium-spitter'] = 4.5,
-    ['medium-biter'] = 4.5,
-    ['big-spitter'] = 13,
-    ['big-biter'] = 13,
-    ['behemoth-spitter'] = 38.5,
-    ['behemoth-biter'] = 38.5,
-    ['small-worm-turret'] = 8,
-    ['medium-worm-turret'] = 16,
-    ['big-worm-turret'] = 24,
-    ['behemoth-worm-turret'] = 32,
-    ['biter-spawner'] = 32,
-    ['spitter-spawner'] = 32,
+    ['small-spitter'] = 10 / small,
+    ['small-biter'] = 15 / small,
+    ['medium-spitter'] = 50 / small,
+    ['medium-biter'] = 75 / small,
+    ['big-spitter'] = 200 / small,
+    ['big-biter'] = 375 / small,
+    ['behemoth-spitter'] = 1500 / small,
+    ['behemoth-biter'] = 3000 / small,
+    ['small-worm-turret'] = 200 / small,
+    ['medium-worm-turret'] = 500 / small,
+    ['big-worm-turret'] = 1500 / small,
+    ['behemoth-worm-turret'] = 3000 / small,
+    ['biter-spawner'] = 350 / small,
+    ['spitter-spawner'] = 350 / small,
 }
 
 local function get_threat_ratio(biter_force_name)

@@ -5,59 +5,25 @@ local math_floor = math.floor
 
 local Public = {}
 
----@param current_player_count integer
----@return number
-local function get_instant_threat_player_count_modifier(current_player_count)
-    local minimum_modifier = 125
-    local maximum_modifier = 250
-    local player_amount_for_maximum_threat_gain = 20
-    local gain_per_player = (maximum_modifier - minimum_modifier) / player_amount_for_maximum_threat_gain
-    local m = minimum_modifier + gain_per_player * current_player_count
-    return math.min(m, maximum_modifier)
-end
-
 ---@param initial_evo number
 ---@param food_value number
 ---@param num_flasks integer
 ---@param current_player_count integer
 ---@param max_reanim_thresh number Long ago, we used reanim_chance rather than health_factor, and this is the evo value at which it would sortof be 100% reanim_chance
----@return { evo_increase: number, threat_increase: number, biter_health_factor: number }
+---@return { evo_increase: number, threat_increase: number, biter_health_factor: number, passive_threat: number }
 function Public.calc_feed_effects(initial_evo, food_value, num_flasks, current_player_count, max_reanim_thresh)
-    local threat = 0
-    local evo = initial_evo
     local food = food_value * num_flasks
-    local threat_scale_factor_past_evo100 = bb_config.threat_scale_factor_past_evo100
-    while food > 0 do
-        local clamped_evo = math.min(evo, 1)
-        ---SET EVOLUTION
-        local e2 = (clamped_evo * 100) + 1
-        local diminishing_modifier = (1 / (10 ^ (e2 * 0.015))) / (e2 * 0.5)
-        local amount_of_food_this_iteration
-        -- By growing by at least 1%, or exponentially by 10% of current evo, whichever is higher,
-        -- we ensure that this will run a bounded number of times, even if /calc-send is run with
-        -- very high numbers.
-        local max_evo_gain_per_iteration
-        if evo < 1 then
-            max_evo_gain_per_iteration = 0.01
-        else
-            max_evo_gain_per_iteration = evo / 10
-        end
-        amount_of_food_this_iteration = math.min(food, max_evo_gain_per_iteration / diminishing_modifier)
-        local evo_gain = (amount_of_food_this_iteration * diminishing_modifier)
-        evo = evo + evo_gain
 
-        --ADD INSTANT THREAT
-        local diminishing_modifier = 1 / (0.2 + (e2 * 0.016))
-        if evo > 1 then
-            -- Give bonus threat for sending as evo grows
-            diminishing_modifier = diminishing_modifier * (1 + (evo - 1) * threat_scale_factor_past_evo100)
-        end
-        threat = threat + (amount_of_food_this_iteration * diminishing_modifier)
+    local evo_scale = 276.66;
+    local evo_power = 0.3
+    local initial_food = (initial_evo ^ (1.0 / evo_power)) * evo_scale;
+    local total_food = initial_food + food;
 
-        food = food - amount_of_food_this_iteration
-    end
+    local evo = (total_food / evo_scale) ^ evo_power;
 
-    threat = threat * get_instant_threat_player_count_modifier(current_player_count)
+    -- TODO normalize mutagen to small biters/min
+    local small_biters_per_food = 1.5;
+    local passive_threat = total_food * small_biters_per_food;
 
     local biter_health = 1
     if evo < 3.3 then
@@ -87,7 +53,8 @@ function Public.calc_feed_effects(initial_evo, food_value, num_flasks, current_p
 
     return {
         evo_increase = evo - initial_evo,
-        threat_increase = threat,
+        threat_increase = 0,
+        passive_threat = passive_threat,
         biter_health_factor = biter_health,
     }
 end

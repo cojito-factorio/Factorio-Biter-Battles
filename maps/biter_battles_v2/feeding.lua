@@ -246,7 +246,7 @@ function Public.do_raw_feed(flask_amount, food, biter_force_name)
     storage.biter_health_factor[force_index] = effects.biter_health_factor
 
     --SET THREAT INCOME
-    storage.bb_threat_income[biter_force_name] = evo * 25
+    storage.bb_threat_income[biter_force_name] = effects.passive_threat
 
     game.forces[biter_force_name].set_evolution_factor(math.min(evo, 1), storage.bb_surface_name)
     storage.bb_evolution[biter_force_name] = evo
@@ -278,6 +278,55 @@ function Public.do_raw_feed(flask_amount, food, biter_force_name)
         storage.bb_threat[enemyBitersForceName] = math_round(storage.bb_threat[enemyBitersForceName] + threat, decimals)
     end
 end
+
+--- @param chest LuaEntity
+--- @param food string
+function Public.feed_biters_from_autofeed_chest(chest, food)
+    local tick = Functions.get_ticks_since_game_start()
+    if storage.active_special_games['captain_mode'] then
+        tick = game.ticks_played
+    end
+    if tick <= storage.difficulty_votes_timeout then
+        return
+    end
+
+    local enemy_force_name = get_enemy_team_of(chest.force.name)
+    local biter_force_name = enemy_force_name .. '_biters'
+
+    local i = chest.get_inventory(defines.inventory.chest)
+    if not i then
+        return
+    end
+    
+    local flask_amount = i.get_item_count(food)
+    if flask_amount == 0 then
+        return
+    end
+
+    i.remove({ name = food, count = flask_amount })
+    local pending_feeds = storage.pending_autofeed_counts[chest.force.name]
+    pending_feeds[food] = (pending_feeds[food] and flask_amount + pending_feeds[food]) or flask_amount
+    
+    local evolution_before_feed = storage.bb_evolution[biter_force_name]
+    local threat_before_feed = storage.bb_threat[biter_force_name]
+
+    Public.do_raw_feed(flask_amount, food, biter_force_name)
+
+    Public.add_feeding_stats(
+        nil,
+        chest.force.name,
+        food,
+        flask_amount,
+        biter_force_name,
+        evolution_before_feed,
+        threat_before_feed
+    )
+
+    if food == 'space-science-pack' then
+        storage.spy_fish_timeout[chest.force.name] = game.tick + 99999999
+    end
+end
+
 
 --- @param player LuaPlayer
 --- @param food string

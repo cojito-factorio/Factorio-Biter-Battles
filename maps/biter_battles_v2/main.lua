@@ -14,6 +14,7 @@ local Muted = require('utils.muted')
 local Team_manager = require('maps.biter_battles_v2.team_manager')
 local Shortcuts = require('maps.biter_battles_v2.shortcuts')
 local Terrain = require('maps.biter_battles_v2.terrain')
+local FeederChest = require('maps.biter_battles_v2.feeder_chest')
 local BossUnit = require('functions.boss_unit')
 local Session = require('utils.datastore.session_data')
 local Server = require('utils.server')
@@ -562,6 +563,13 @@ local function on_tick()
             storage.bb_threat['south_biters'] = storage.bb_threat['south_biters']
                 + storage.bb_threat_income['south_biters']
         end)
+    end
+    
+    if tick % 600 == 0 then
+        FeederChest.autofeed()
+        if tick % 3600 == 0 then
+            FeederChest.print_autofeed_message()
+        end
     end
 
     if (tick + 11) % 300 == 0 then
