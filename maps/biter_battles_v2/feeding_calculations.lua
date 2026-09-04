@@ -14,16 +14,16 @@ local Public = {}
 function Public.calc_feed_effects(initial_evo, food_value, num_flasks, current_player_count, max_reanim_thresh)
     local food = food_value * num_flasks
 
-    local evo_scale = 276.66;
+    local evo_scale = 276.66
     local evo_power = 0.3
-    local initial_food = (initial_evo ^ (1.0 / evo_power)) * evo_scale;
-    local total_food = initial_food + food;
+    local initial_food = (initial_evo ^ (1.0 / evo_power)) * evo_scale
+    local total_food = initial_food + food
 
-    local evo = (total_food / evo_scale) ^ evo_power;
+    local evo = (total_food / evo_scale) ^ evo_power
 
     -- TODO normalize mutagen to small biters/min
-    local small_biters_per_food = 1.5;
-    local passive_threat = total_food * small_biters_per_food;
+    local small_biters_per_food = 1.5
+    local passive_threat = total_food * small_biters_per_food
 
     local biter_health = 1
     if evo < 3.3 then

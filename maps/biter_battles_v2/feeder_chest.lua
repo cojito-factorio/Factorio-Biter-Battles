@@ -37,20 +37,20 @@ Public.print_autofeed_message = function()
     local force_summaries = {}
     local has_any = false
 
-for _, force in ipairs(forces) do
-    local counts = storage.pending_autofeed_counts[force]
-    if counts and next(counts) then
-        has_any = true
+    for _, force in ipairs(forces) do
+        local counts = storage.pending_autofeed_counts[force]
+        if counts and next(counts) then
+            has_any = true
 
-        local items = {}
-        for food, amount in pairs(counts) do
-            table.insert(items, '[img=item.' .. food .. '] x' .. amount)
+            local items = {}
+            for food, amount in pairs(counts) do
+                table.insert(items, '[img=item.' .. food .. '] x' .. amount)
+            end
+
+            local team_label = Functions.team_name_with_color(force) or force
+            table.insert(force_summaries, team_label .. ': ' .. table.concat(items, ', '))
         end
-
-        local team_label = Functions.team_name_with_color(force) or force
-        table.insert(force_summaries, team_label .. ': ' .. table.concat(items, ', '))
     end
-end
 
     if not has_any then
         return

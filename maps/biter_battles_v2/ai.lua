@@ -16,7 +16,7 @@ local math_floor = math.floor
 local unit_type_raffle = { 'biter', 'mixed', 'mixed', 'spitter', 'spitter' }
 local size_of_unit_type_raffle = #unit_type_raffle
 
-local small = 15;
+local small = 15
 local threat_values = {
     ['small-spitter'] = 10 / small,
     ['small-biter'] = 15 / small,

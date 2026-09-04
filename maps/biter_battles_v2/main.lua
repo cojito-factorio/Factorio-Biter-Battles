@@ -564,7 +564,7 @@ local function on_tick()
                 + storage.bb_threat_income['south_biters']
         end)
     end
-    
+
     if tick % 600 == 0 then
         FeederChest.autofeed()
         if tick % 3600 == 0 then

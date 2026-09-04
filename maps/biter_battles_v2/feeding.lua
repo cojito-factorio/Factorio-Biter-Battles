@@ -297,7 +297,7 @@ function Public.feed_biters_from_autofeed_chest(chest, food)
     if not i then
         return
     end
-    
+
     local flask_amount = i.get_item_count(food)
     if flask_amount == 0 then
         return
@@ -306,7 +306,7 @@ function Public.feed_biters_from_autofeed_chest(chest, food)
     i.remove({ name = food, count = flask_amount })
     local pending_feeds = storage.pending_autofeed_counts[chest.force.name]
     pending_feeds[food] = (pending_feeds[food] and flask_amount + pending_feeds[food]) or flask_amount
-    
+
     local evolution_before_feed = storage.bb_evolution[biter_force_name]
     local threat_before_feed = storage.bb_threat[biter_force_name]
 
@@ -326,7 +326,6 @@ function Public.feed_biters_from_autofeed_chest(chest, food)
         storage.spy_fish_timeout[chest.force.name] = game.tick + 99999999
     end
 end
-
 
 --- @param player LuaPlayer
 --- @param food string
